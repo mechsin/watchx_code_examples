@@ -8,4 +8,7 @@ Collection of code personal code examples for WatchX
 0x69 -> Motion Pak MPU6050
 0x76 -> Barometric Pressure and Temperature BMP280
 
-The default address for the MPU6050 is 0x68 so you need to pass 0x69 or define MPU6050_ADDRESS as 0x69. All other devices are at there default addresses
+The default address for the MPU6050 is 0x68 so you need to pass 0x69 or define MPU6050_ADDRESS as 0x69. All other devices are at there default addresses.
+
+
+Screen Size 128x64
