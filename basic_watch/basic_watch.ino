@@ -2,6 +2,9 @@
  * Basic WatchX Watch Display
  * This program should display the current RTC time
  * on the OLED.
+ * 
+ * If the RTC loses power the time will be reset 
+ * to the time the sketch was compiled. 
  */
 
 // Both the RTC and OLED need the following 
@@ -49,18 +52,20 @@ void displaytime() {
 void setup() {  
 
   // Start the serial console because you always
-  // should incase you need to debug later
+  // should in case you need to debug later
   Serial.begin(9600);
 
-  //  Gen. display voltage from 3.3V
+  // Generate display voltage at 3.3V
   display.begin(SSD1306_SWITCHCAPVCC);
 
+  // Catch for if the RTC is not there for some reason
   if (! rtc.begin()) {
     display.clearDisplay();
     setDisplayText();
     display.println("Couldn't find RTC");
     while (1);
   }
+
   // If the RTC lost power then we set the RTC time 
   // to the date and time the sketch was compiled
   if (rtc.lostPower()) {
@@ -75,6 +80,7 @@ void setup() {
   
 }
 
+// Just continue to display the time roughly every second 
 void loop() {
   displaytime();
   delay(1000);
