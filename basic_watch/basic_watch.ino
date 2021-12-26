@@ -22,11 +22,14 @@
 // This sets up the RTC I2C and other parameters
 RTC_DS3231 rtc;
 
-// SPI Setup for OLED
+// SPI Setup for OLED and create display object
 #define OLED_DC     A3
 #define OLED_CS     A5
 #define OLED_RESET  A4
-Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
+  &SPI, OLED_DC, OLED_RESET, OLED_CS);
 
 char timebuf[9];
 
