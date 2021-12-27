@@ -27,7 +27,7 @@ RTC_DS3231 rtc;
 MPU6050 mpu;
 int interruptCount=0;
 int count=0;
-DateTime usbtime; 
+DateTime usbtime;
 DateTime now;
 void interruptFunction() {
  interruptCount++;
@@ -37,7 +37,7 @@ void setup() {
  rtc.begin();
  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
  display.begin(SSD1306_SWITCHCAPVCC);
- pinMode(BUTTON1, INPUT_PULLUP);  
+ pinMode(BUTTON1, INPUT_PULLUP);
  // turn off accelerometer
  mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G);
  mpu.setSleepEnabled(true);
@@ -58,7 +58,7 @@ void showBattery(){
  display.setCursor(0, 20);
  display.print("Bat:");
  display.print((int) batteryLevel);
- display.print("%"); 
+ display.print("%");
  int minsinceusb = 60 * (now.hour()-usbtime.hour()) + now.minute()-usbtime.minute();
  display.setCursor(0, 40);
 //  display.print(minsinceusb);
@@ -95,7 +95,7 @@ void loop() {
      if (digitalRead(BUTTON1) == 0) {
          display.ssd1306_command(SSD1306_DISPLAYON);
      }
-  }else{ 
+  }else{
    if (count >= 20) {
      delay(500);     // this delay is needed, the sleep
      count = 0;
@@ -104,7 +104,7 @@ void loop() {
  }
  count++;
  count = count % 1000;
- display.display();  
+ display.display();
 }
 void sleepNow()         // here we put the arduino to sleep
 {
@@ -127,7 +127,7 @@ void sleepNow()         // here we put the arduino to sleep
     * choose the according
     * sleep mode: SLEEP_MODE_PWR_DOWN
     *
-    */  
+    */
    set_sleep_mode(SLEEP_MODE_PWR_DOWN);   // sleep mode is set here
    sleep_enable();          // enables the sleep bit in the mcucr register
                             // so sleep is possible. just a safety pin
@@ -138,7 +138,7 @@ void sleepNow()         // here we put the arduino to sleep
     * setup() for example.
     *
     * In the function call attachInterrupt(A, B, C)
-    * A   can be either 0 or 1 for interrupts on pin 2 or 3.  
+    * A   can be either 0 or 1 for interrupts on pin 2 or 3.
     *
     * B   Name of a function you want to execute at interrupt for A.
     *
