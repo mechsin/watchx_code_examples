@@ -70,11 +70,10 @@ void showBattery(){
  }
 }
 void showTime(){
- display.setCursor(0, 0);
- now  = rtc.now();
- display.print(now.hour());
- display.print(":");
- display.print(now.minute());
+ char timebuf[9];
+ now = rtc.now();
+ sprintf(timebuf, "%02i:%02i:%02i", now.hour(), now.minute(), now.second());
+ display.print(timebuf);
 }
 bool IsUSBConnected(){
  return(UDADDR & _BV(ADDEN));
