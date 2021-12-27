@@ -7,10 +7,9 @@
 #include "RTClib.h"
 #include <Wire.h>
 #include <MPU6050.h>
+#include "watchx_display.h"
+
 // Uncomment this block to use hardware SPI
-#define OLED_DC     A3
-#define OLED_CS     A5
-#define OLED_RESET  A4
 #define BUTTON1 8
 #define R1 10000
 #define R2 10000
@@ -24,7 +23,6 @@
 //
 //BLEPeripheral           blePeripheral        = BLEPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
 //Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
-Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 RTC_DS3231 rtc;
 MPU6050 mpu;
 int interruptCount=0;
