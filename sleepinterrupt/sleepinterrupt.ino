@@ -80,11 +80,11 @@ bool IsUSBConnected(){
 }
 void loop() {
  display.clearDisplay();
+ display.setCursor(0,0);
  showTime();
  showBattery();
   if (IsUSBConnected()){  // check if USB is connected.
-       display.setCursor(100, 20);
-       display.print("C"); 
+       display.print("C");
        usbtime= rtc.now();
        usbbatteryLevel = batteryLevel;
       if (count >= 100) {
