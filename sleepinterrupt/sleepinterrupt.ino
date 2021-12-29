@@ -24,6 +24,7 @@
 //BLEPeripheral           blePeripheral        = BLEPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
 //Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
+DateTime rtcOnTime;
 unsigned long ontime = millis();
 unsigned long uptime;
 byte updays, uphours, upminutes, upseconds;
@@ -48,6 +49,8 @@ void setup() {
  mpu.setSleepEnabled(true);
  display.setTextSize(2);
  display.setTextColor(WHITE);
+
+ rtcOnTime = rtc.now();
 }
 float batteryLevel=0;
 float usbbatteryLevel=0;
@@ -87,19 +90,31 @@ void readBattery(float *reading) {
 
   return;
 }
+
 void showTime(){
  char timebuf[9];
  now = rtc.now();
  sprintf(timebuf, "%02i:%02i:%02i", now.hour(), now.minute(), now.second());
  display.print(timebuf);
+
+ return;
 }
+
 bool IsUSBConnected(){
  return(UDADDR & _BV(ADDEN));
+}
+
+void calculateUpTime(TimeSpan *uptime) {
+  DateTime now = rtc.now();
+  *uptime = now - rtcOnTime;
+
+  return;
 }
 
 void display1() {
   char buf[12];
   float batteryVoltage;
+  TimeSpan rtcUpTime;
 
   // Setup displya
   display.clearDisplay();
@@ -112,18 +127,20 @@ void display1() {
   }
   display.println();
 
-  // Print the current up time using millis
-  // This doesn't actually work because millis stops
-  // counting when the the board is put into sleep mode
-  // but I will update it later
+  // Print the current up time based on the RTC time
+  calculateUpTime(&rtcUpTime);
+  sprintf(buf,"%03d:%02d:%02d:%02d", rtcUpTime.days(), rtcUpTime.hours(), rtcUpTime.minutes(), rtcUpTime.seconds());
+  display.print("Up Time:");
+  display.println(buf);
+
+  // Print the awake time using millis
   uptime = (millis() - ontime) / 1000;
   updays = uptime / 86400;
   uphours = (uptime - updays * 86400) / 3600;
   upminutes = (uptime - updays * 86400 - uphours * 3600) / 60;
   upseconds = uptime % 60;
-  display.println(upseconds);
   sprintf(buf,"%03d:%02d:%02d:%02d", updays, uphours, upminutes, upseconds);
-  display.print("Uptime:");
+  display.print("ATime:");
   display.print(buf);
   display.println();
 
@@ -133,7 +150,8 @@ void display1() {
   readBattery(&batteryVoltage);
   dtostrf((100 / 4.2) * batteryVoltage, 3, 1, buf);
   display.print("Battery:");
-  display.println(buf);
+  display.print(buf);
+  display.println('%');
 
   // Display the page
   display.display();
