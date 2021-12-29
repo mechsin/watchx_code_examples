@@ -23,6 +23,11 @@
 //
 //BLEPeripheral           blePeripheral        = BLEPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
 //Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
+
+unsigned long ontime = millis();
+unsigned long uptime;
+byte updays, uphours, upminutes, upseconds;
+
 RTC_DS3231 rtc;
 MPU6050 mpu;
 int interruptCount=0;
@@ -61,13 +66,26 @@ void showBattery(){
  display.print("%");
  int minsinceusb = 60 * (now.hour()-usbtime.hour()) + now.minute()-usbtime.minute();
  display.setCursor(0, 40);
-//  display.print(minsinceusb);
+ display.print(minsinceusb);
  float batdiff = (usbbatteryLevel - batteryLevel);
  if (batdiff > 0 && minsinceusb > 0){
    float minleft = batteryLevel*minsinceusb/batdiff;
    display.print(" Min:");
    display.print((int) minleft);
  }
+}
+
+// Function that updates float pointer with the
+// current percentage of charge on the battery
+void readBattery(float *reading) {
+
+  digitalWrite(BATTERYENERGY, HIGH);
+  *reading = analogRead(BATTERYINPUT);
+  *reading = (*reading / 1024) * 3.35;
+  *reading = *reading * (20000 / 10000);
+  digitalWrite(4, LOW);
+
+  return;
 }
 void showTime(){
  char timebuf[9];
@@ -78,13 +96,52 @@ void showTime(){
 bool IsUSBConnected(){
  return(UDADDR & _BV(ADDEN));
 }
-void loop() {
- display.clearDisplay();
- display.setCursor(0,0);
- showTime();
- showBattery();
+
+void display1() {
+  char buf[12];
+  float batteryVoltage;
+
+  // Setup displya
+  display.clearDisplay();
+  setDisplayText();
+
+  // Show the current RTC time and indicate if we are charging
+  showTime();
   if (IsUSBConnected()){  // check if USB is connected.
-       display.print("C");
+    display.print("C");
+  }
+  display.println();
+
+  // Print the current up time using millis
+  // This doesn't actually work because millis stops
+  // counting when the the board is put into sleep mode
+  // but I will update it later
+  uptime = (millis() - ontime) / 1000;
+  updays = uptime / 86400;
+  uphours = (uptime - updays * 86400) / 3600;
+  upminutes = (uptime - updays * 86400 - uphours * 3600) / 60;
+  upseconds = uptime % 60;
+  display.println(upseconds);
+  sprintf(buf,"%03d:%02d:%02d:%02d", updays, uphours, upminutes, upseconds);
+  display.print("Uptime:");
+  display.print(buf);
+  display.println();
+
+  // Print the current battery voltage as a percentage
+  // of 4.2 volts max
+  memset(buf, 0, sizeof(buf));
+  readBattery(&batteryVoltage);
+  dtostrf((100 / 4.2) * batteryVoltage, 3, 1, buf);
+  display.print("Battery:");
+  display.println(buf);
+
+  // Display the page
+  display.display();
+}
+void loop() {
+
+  display1();
+  if (IsUSBConnected()){  // check if USB is connected.
        usbtime= rtc.now();
        usbbatteryLevel = batteryLevel;
       if (count >= 200) {
