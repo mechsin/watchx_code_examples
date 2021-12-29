@@ -87,7 +87,7 @@ void loop() {
        display.print("C");
        usbtime= rtc.now();
        usbbatteryLevel = batteryLevel;
-      if (count >= 100) {
+      if (count >= 200) {
          count = 0;
          display.ssd1306_command(SSD1306_DISPLAYOFF);
      }
@@ -95,7 +95,7 @@ void loop() {
          display.ssd1306_command(SSD1306_DISPLAYON);
      }
   }else{
-   if (count >= 20) {
+   if (count >= 200) {
      delay(500);     // this delay is needed, the sleep
      count = 0;
      sleepNow();     // sleep function called here
